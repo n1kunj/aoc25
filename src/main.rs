@@ -1,6 +1,7 @@
 pub mod day_output;
 mod days;
-pub mod direction;
+pub mod direction1d;
+pub mod direction2d;
 pub mod facing;
 pub mod map;
 
