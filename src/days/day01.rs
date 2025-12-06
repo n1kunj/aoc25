@@ -1,5 +1,3 @@
-use num::range;
-
 use crate::{day_output::DayOutput, direction1d::Direction1D};
 
 struct Rotation {
@@ -25,7 +23,7 @@ pub fn main(input: &str, output: &mut DayOutput) {
 
     let mut r = 50i64;
     for rot in rotations.iter() {
-        for _ in range(0, rot.n) {
+        for _ in 0..rot.n {
             r = Direction1D::go(r, rot.d);
             if r == -1 {
                 r += 100;
