@@ -1,3 +1,5 @@
+use std::collections::HashSet;
+
 use crate::{
     day_output::DayOutput,
     facing::{Facing, FACINGS},
@@ -29,27 +31,49 @@ pub fn main(input: &str, output: &mut DayOutput) {
     let mut part1 = 0usize;
     let mut part2 = 0usize;
 
-    for (y, row) in map.rows.iter().enumerate() {
-        for (x, tile) in row.tiles.iter().enumerate() {
-            if !matches!(tile, Tile::Paper) {
-                continue;
-            }
-            let mut papers = 0usize;
-            for f in FACINGS {
-                let d = Facing::go((x as isize, y as isize), *f);
-                let nt = map.at(d);
-                match nt {
-                    Some(tile) => match tile {
-                        Tile::Empty => (),
-                        Tile::Paper => papers += 1,
-                    },
-                    None => (),
+    let mut is_first_iteration = true;
+    let mut removed_papers = HashSet::<(isize, isize)>::new();
+    let mut next_removed_papers = Vec::<(isize, isize)>::new();
+    loop {
+        for (y, row) in map.rows.iter().enumerate() {
+            for (x, tile) in row.tiles.iter().enumerate() {
+                if !matches!(tile, Tile::Paper) {
+                    continue;
+                }
+                let pos = (x as isize, y as isize);
+                if removed_papers.contains(&pos) {
+                    continue;
+                }
+                let mut papers = 0usize;
+                for f in FACINGS {
+                    let d = Facing::go(pos, *f);
+                    let nt = map.at(d);
+                    match nt {
+                        Some(tile) => match tile {
+                            Tile::Empty => (),
+                            Tile::Paper => {
+                                if !removed_papers.contains(&d) {
+                                    papers += 1
+                                }
+                            }
+                        },
+                        None => (),
+                    }
+                }
+                if papers < 4 {
+                    if is_first_iteration {
+                        part1 += 1;
+                    }
+                    part2 += 1;
+                    next_removed_papers.push(pos);
                 }
             }
-            if papers < 4 {
-                part1 += 1;
-            }
         }
+        is_first_iteration = false;
+        if next_removed_papers.is_empty() {
+            break;
+        }
+        removed_papers.extend(next_removed_papers.drain(..));
     }
     output.part1(part1.to_string());
     output.part2(part2.to_string());
