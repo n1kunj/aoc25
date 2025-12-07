@@ -1,4 +1,4 @@
-use std::collections::HashSet;
+use std::collections::HashMap;
 
 use crate::{
     day_output::DayOutput,
@@ -35,35 +35,42 @@ pub fn main(input: &str, output: &mut DayOutput) {
     let start = start.unwrap();
     let map = Map { rows };
 
-    let mut beamfronts = HashSet::<(isize, isize)>::new();
+    let mut beamfronts = HashMap::<(isize, isize), u64>::new();
+    beamfronts.insert(
+        Direction2D::go((start.0 as isize, start.1 as isize), Direction2D::Down),
+        1,
+    );
 
-    beamfronts.insert(Direction2D::go(
-        (start.0 as isize, start.1 as isize),
-        Direction2D::Down,
-    ));
-
-    let mut new_beamfronts = HashSet::<(isize, isize)>::new();
-
+    let mut new_beamfronts = HashMap::<(isize, isize), u64>::new();
+    let mut exited = 0u64;
     let mut split_count = 0u64;
-
     loop {
-        for beam in beamfronts.drain() {
+        let mut add_new_beamfront = |beam: (isize, isize), count: u64| {
+            new_beamfronts
+                .entry(beam)
+                .and_modify(|e| *e += count)
+                .or_insert(count);
+        };
+        for (beam, count) in beamfronts.drain() {
             let next = Direction2D::go(beam, Direction2D::Down);
             let t = map.at(next);
-            if let Some(t) = t {
-                match t {
+
+            match t {
+                Some(t) => match t {
                     Tile::Empty => {
-                        new_beamfronts.insert(next);
+                        add_new_beamfront(next, count);
                     }
                     Tile::Splitter => {
+                        split_count += 1;
+
                         let l = Direction2D::go(next, Direction2D::Left);
                         let r = Direction2D::go(next, Direction2D::Right);
-                        split_count += 1;
-                        new_beamfronts.insert(l);
-                        new_beamfronts.insert(r);
+                        add_new_beamfront(l, count);
+                        add_new_beamfront(r, count);
                     }
                     Tile::Start => panic!(),
-                };
+                },
+                None => exited += count,
             }
         }
         beamfronts.extend(new_beamfronts.drain());
@@ -71,6 +78,6 @@ pub fn main(input: &str, output: &mut DayOutput) {
             break;
         }
     }
-
     output.part1(split_count.to_string());
+    output.part2(exited.to_string());
 }
