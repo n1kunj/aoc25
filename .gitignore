@@ -1,3 +1,4 @@
 /inputs
 /target
 perf.data*
+flamegraph.svg
