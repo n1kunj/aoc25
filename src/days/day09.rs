@@ -102,10 +102,7 @@ pub fn main(input: &str, output: &mut DayOutput) {
                     let n = Direction2D::go(p, d);
                     let nt = map.at(n);
                     let is_t_none = match nt {
-                        Some(nt) => match nt {
-                            Tile::None => true,
-                            _ => false,
-                        },
+                        Some(nt) => matches!(nt, Tile::None),
                         None => true,
                     };
                     if is_t_none {

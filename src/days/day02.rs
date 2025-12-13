@@ -8,7 +8,7 @@ pub fn main(input: &str, output: &mut DayOutput) {
     let mut part1 = 0u64;
     let mut part2 = 0u64;
     for id in input.split(",") {
-        let mut tokens = id.split("-").into_iter();
+        let mut tokens = id.split("-");
         let first_s = tokens.next().unwrap();
         let second_s = tokens.next().unwrap();
         assert!(tokens.next().is_none());
@@ -36,7 +36,7 @@ pub fn main(input: &str, output: &mut DayOutput) {
                     }
                 }
                 if !any_not_matching {
-                    if buf.len() % 2 == 0 && d == buf.len() / 2 {
+                    if buf.len().is_multiple_of(2) && d == buf.len() / 2 {
                         part1 += i;
                     }
                     part2 += i;

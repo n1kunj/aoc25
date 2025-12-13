@@ -2,7 +2,7 @@ use std::collections::HashSet;
 
 use crate::{
     day_output::DayOutput,
-    facing::{Facing, FACINGS},
+    facing::{FACINGS, Facing},
     map::{Map, Row},
 };
 
@@ -48,16 +48,15 @@ pub fn main(input: &str, output: &mut DayOutput) {
                 for f in FACINGS {
                     let d = Facing::go(pos, *f);
                     let nt = map.at(d);
-                    match nt {
-                        Some(tile) => match tile {
+                    if let Some(tile) = nt {
+                        match tile {
                             Tile::Empty => (),
                             Tile::Paper => {
                                 if !removed_papers.contains(&d) {
                                     papers += 1
                                 }
                             }
-                        },
-                        None => (),
+                        }
                     }
                 }
                 if papers < 4 {

@@ -1,4 +1,4 @@
-use std::{collections::HashMap, usize};
+use std::collections::HashMap;
 
 use crate::day_output::DayOutput;
 
@@ -17,7 +17,7 @@ pub fn main(input: &str, output: &mut DayOutput) {
         let mut joltage = Vec::<usize>::new();
         for token in line.split_whitespace() {
             let contents = &token[1..token.len() - 1];
-            match token.chars().nth(0).unwrap() {
+            match token.chars().next().unwrap() {
                 '[' => {
                     for c in contents.chars() {
                         let l = match c {
@@ -80,7 +80,7 @@ pub fn main(input: &str, output: &mut DayOutput) {
                     }
                 }
             }
-            cur_states.extend(next_states.drain(..));
+            cur_states.append(&mut next_states);
         };
         part1 += pushes;
     }
@@ -149,8 +149,8 @@ pub fn main(input: &str, output: &mut DayOutput) {
             let mut best_bidx = usize::MAX;
             let mut best_range = usize::MAX;
             let mut best_range_bidx = (0usize, usize::MAX);
-            for bidx in 0..pushes.len() {
-                if pushes[bidx].is_some() {
+            for (bidx, push) in pushes.iter().enumerate() {
+                if push.is_some() {
                     continue;
                 }
                 let (bmin, bmax) = next_valid_range(m, joltages, missings, bidx);
@@ -201,7 +201,7 @@ pub fn main(input: &str, output: &mut DayOutput) {
         }
 
         recurse(
-            &m,
+            m,
             &mut pushes,
             &mut joltages,
             &mut missings,

@@ -32,9 +32,8 @@ pub fn main(input: &str, output: &mut DayOutput) {
                     '+' => Entry::Op(Op::Add),
                     _ => panic!(),
                 };
-                match e {
-                    Entry::Op(op) => ops.push(op),
-                    _ => (),
+                if let Entry::Op(op) = e {
+                    ops.push(op)
                 }
                 tiles.push(e);
             }
